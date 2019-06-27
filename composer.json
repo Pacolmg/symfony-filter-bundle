@@ -1,5 +1,5 @@
 {
-    "name": "slx/filter-bundle",
+    "name": "pacolmg/filter-bundle",
     "description": "A wee library to filter objects in Symfony 4 entities repositories",
     "type": "symfony-bundle",
     "license": "MIT",
