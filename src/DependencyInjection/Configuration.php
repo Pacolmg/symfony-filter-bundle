@@ -1,6 +1,6 @@
 <?php
 
-namespace Pacolmg\FilterBundle\DependencyInjection;
+namespace Pacolmg\SymfonyFilterBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

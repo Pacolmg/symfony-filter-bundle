@@ -1,6 +1,6 @@
 {
-    "name": "pacolmg/filter-bundle",
-    "description": "A wee library to filter objects in Symfony 4 entities repositories",
+    "name": "pacolmg/symfony-filter-bundle",
+    "description": "Wee library to filter objects in Symfony 4 entities repositories",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Pacolmg\\FilterBundle\\": "src/"
+            "Pacolmg\\SymfonyFilterBundle\\": "src/"
         }
     },
     "autoload-dev": {
     "psr-4": {
-        "Pacolmg\\FilterBundle\\Tests\\": "tests/"
+        "Pacolmg\\SymfonyFilterBundle\\Tests\\": "tests/"
     }
 },
     "require-dev": {

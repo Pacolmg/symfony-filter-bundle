@@ -1,13 +1,13 @@
 <?php
 
-namespace Pacolmg\FilterBundle\DependencyInjection;
+namespace Pacolmg\SymfonyFilterBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class PacolmgFilterExtension extends Extension
+class PacolmgSymfonyFilterExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {

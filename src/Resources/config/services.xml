@@ -8,6 +8,6 @@
         <!-- Default configuration for services in *this* file -->
         <defaults autowire="true" autoconfigure="true" public="false"/>
 
-        <prototype namespace="Pacolmg\FilterBundle\" resource="../../../src/*" exclude="../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}"/>
+        <prototype namespace="Pacolmg\SymfonyFilterBundle\" resource="../../../src/*" exclude="../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}"/>
     </services>
 </container>

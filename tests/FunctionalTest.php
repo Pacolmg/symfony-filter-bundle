@@ -1,9 +1,9 @@
 <?php
 
-namespace Pacolmg\FilterBundle\Tests;
+namespace Pacolmg\SymfonyFilterBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Pacolmg\FilterBundle\PacolmgFilterBundle;
+use Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
 use Symfony\Component\HttpKernel\Kernel;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Kernel;
 /**
  * Class FunctionalTest
  *
- * @package Pacolmg\FilterBundle\Tests
+ * @package Pacolmg\SymfonyFilterBundle\Tests
  */
 class FunctionalTest extends TestCase
 {
@@ -40,7 +40,7 @@ class PacolmgTestingKernel extends Kernel
     public function registerBundles()
     {
         return [
-            new PacolmgFilterBundle(),
+            new PacolmgSymfonyFilterBundle(),
         ];
     }
     public function registerContainerConfiguration(LoaderInterface $loader)
