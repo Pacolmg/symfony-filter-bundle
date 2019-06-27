@@ -18,7 +18,7 @@ class PacolmgSymfonyFilterExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $definition = $container->getDefinition('Pacolmg\SymfonyFilterBundle\Service\externalParametersService');
+        $definition = $container->getDefinition('Pacolmg\SymfonyFilterBundle\Service\ExternalParametersService');
         $definition->setArgument(0, $config['default_limit']);
     }
 }

@@ -2,7 +2,8 @@
 
 namespace Pacolmg\SymfonyFilterBundle\Tests;
 
-use Pacolmg\SymfonyFilterBundle\Service\externalParametersService;
+use Pacolmg\SymfonyFilterBundle\Service\ExternalParametersService;
+use Pacolmg\SymfonyFilterBundle\Service\FilterService;
 use PHPUnit\Framework\TestCase;
 use Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -24,9 +25,12 @@ class FunctionalTest extends TestCase
 
         $this->assertEquals(1,1);
 
-        $filterService = $container->get('pacolmg_symfony_filter_external_parameters_service');
-        $this->assertInstanceOf(externalParametersService::class, $filterService);
-        $this->assertGreaterThan(0, $filterService->getDefaultLimit());
+        $service = $container->get('pacolmg_symfony_filter_external_parameters_service');
+        $this->assertInstanceOf(ExternalParametersService::class, $service);
+        $this->assertGreaterThan(0, $service->getDefaultLimit());
+
+        $service = $container->get('pacolmg_symfony_filter_service');
+        $this->assertInstanceOf(FilterService::class, $service);
     }
 }
 

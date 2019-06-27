@@ -11,6 +11,7 @@
         <prototype namespace="Pacolmg\SymfonyFilterBundle\" resource="../../../src/*" exclude="../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}"/>
 
         <!-- Configuration non default Services -->
-        <service id="pacolmg_symfony_filter_external_parameters_service" class="Pacolmg\SymfonyFilterBundle\Service\externalParametersService" public="true" />
+        <service id="pacolmg_symfony_filter_external_parameters_service" class="Pacolmg\SymfonyFilterBundle\Service\ExternalParametersService" public="true" />
+        <service id="pacolmg_symfony_filter_service" class="Pacolmg\SymfonyFilterBundle\Service\FilterService" public="true" />
     </services>
 </container>
