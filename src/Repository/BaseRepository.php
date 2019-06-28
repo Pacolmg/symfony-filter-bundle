@@ -27,7 +27,6 @@ class BaseRepository extends ServiceEntityRepository
      */
     const FILTER_EXACT = 'exact';
     const FILTER_EXACT_MULTIPLE = 'exact_multiple';
-    const FILTER_EXACT_MULTIPLE_AND = 'exact_multiple_and';
     const FILTER_LIKE = 'like';
     const FILTER_IN = 'in';
     const FILTER_GREATER = 'greater';
@@ -91,20 +90,6 @@ class BaseRepository extends ServiceEntityRepository
                     }
                     break;
                 case self::FILTER_EXACT_MULTIPLE:
-                    $sql = '';
-                    $countFields = 1;
-                    foreach ($filter['value'] as $value) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $alias . '.' . $filter['field'] . ' = :' . $filter['field'] . '_filter_' . $rnd.$countFields;
-                        $countFields++;
-                    }
-                    $qb->andWhere($sql);
-                    $countFields = 1;
-                    foreach ($filter['value'] as $value) {
-                        $qb->setParameter($filter['field'] . '_filter_' . $rnd.$countFields, $value);
-                        $countFields++;
-                    }
-                    break;
-                case self::FILTER_EXACT_MULTIPLE_AND:
                     $sql = '';
                     $countFields = 0;
                     // Join the rest of the fields
