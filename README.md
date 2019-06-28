@@ -251,3 +251,70 @@ This example will return an array with two keys:
 ```
 
 ## Filter from the Controller
+
+To make a complete integration with a Website, the bundle provide another Service `Pacolmg\SymfonyFilterBundle\Service\ExternalParametersService` where there are some methods to get parameters from a `Request`.
+
+### Get Page and Limit
+The method `getPageAndLimit` returns in an array the page and the number of elements per page. It gets the information from the parameters `page` and `limit`.
+
+#### Examples
+In the Controller we can code this and the variable `$page` and `$limit` will have the page and the number of elements per page, the minimum page is 1 and the maximum limit is 500.
+
+`list($page, $limit) = $this->externalParametersService->getPageAndLimit($request);`
+
+### Get Filters
+The method `getFilters` needs the `$request` and the `$filters` and will return the value for them, in order to make it work, we need to add a pair of fields to each filter:
+```
+[
+    'type' => Constant that defines the behaviour,
+    'field' => Field of the Entity,
+    'request_type' => Type of the value
+    'request_name' => Name of the parameter
+]
+```
+
+#### Request Types
+The types can be:
+- int
+- string
+- bool
+- array
+
+
+### Examples
+We have have a website with a search input that send the controller a parameter `t` with the value of the input, and we want to use this to look for a title like the parameter `t`:
+```http://mywebsite.com?t=tree```
+
+In the Controller we should code:
+```
+$filters = $this->entityManager->getRepository('App:Article')->getAll([
+    [
+        'type': BaseRepository::FILTER_LIKE,
+        'field': 'title',
+        'request_type': 'string',
+        'request_name': 't'
+    ]
+]);
+
+list($data, $totalData) = $this->filterService->getFiltered($filters);
+```
+
+In the next example we have parameters for the pagination:
+
+`http://mywebsite.com?t=tree&page=2&limit=10`
+
+So, this will be the code in the Controller:
+```
+list($page, $limit) = $this->externalParametersService->getPageAndLimit($request);
+
+$filters = $this->entityManager->getRepository('App:Article')->getAll([
+    [
+        'type': BaseRepository::FILTER_LIKE,
+        'field': 'title',
+        'request_type': 'string',
+        'request_name': 't'
+    ]
+]);
+
+list($data, $totalData) = $this->filterService->getFiltered($filters, $page, $limit);
+```
