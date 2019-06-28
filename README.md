@@ -1,6 +1,6 @@
 # Symfony Filter Bundle
 
-This bundle provides your Symfony 4 app the some functions to filter and make lists in an easy way.
+This bundle provides your Symfony 4 app some functions to filter and make lists in an easy way.
 
 License [MIT](https://raw.githubusercontent.com/Pacolmg/symfony-filter-bundle/master/LICENSE)
 
