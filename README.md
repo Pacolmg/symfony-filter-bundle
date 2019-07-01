@@ -18,7 +18,7 @@ License [MIT](https://raw.githubusercontent.com/Pacolmg/symfony-filter-bundle/ma
 
 ### Add the package to composer via console
 ```bash
-$ composer  require  slx/filter-bundle:"*@dev"
+$ composer  require  pacolmg/symfony-filter-bundle:"*@dev"
 ```
 
 ### Extend the Repository of the entity that need to be filtered
