@@ -61,11 +61,11 @@ It's the only mandatory parameter, and is composed by an array of different filt
 ```
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields, separated by comma) where search the value,
+    'field' => Field of the Entity (Or fields, separated by pipe ("|")) where search the value,
     'value' => Value to compare
 ]
 ```
-**The *field* is allow to have multiple values separated by a comma to search the same value in more than one field.
+**The *field* is allow to have multiple values separated by a pipe "|" to search the same value in more than one field.
 
 
 #### Type of filters
@@ -107,7 +107,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'title,body',
+        'field': 'title|body',
         'value': 'cat'
     ]
 ]);
@@ -123,7 +123,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'title,body',
+        'field': 'title|body',
         'value': 'cat'
     ],
     [
@@ -150,7 +150,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'title,body',
+        'field': 'title|body',
         'value': 'cat'
     ],
     [
@@ -175,7 +175,7 @@ $this->entityManager->getRepository('App:Article')->getAllCount([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'title,body',
+        'field': 'title|body',
         'value': 'cat'
     ],
     [
@@ -223,7 +223,7 @@ $this->filterService->getFiltered(
 	    ],
 	    [
 	        'type': BaseRepository::FILTER_LIKE,
-	        'field': 'title,body',
+	        'field': 'title|body',
 	        'value': 'cat'
 	    ],
 	    [
@@ -269,7 +269,7 @@ The method `getFilters` needs the `$request` and the `$filters` and will return 
 ```
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields separated by comma) where find the value,
+    'field' => Field of the Entity (Or fields separated by pipe ("|")) where find the value,
     'request_type' => Type of the value
     'request_name' => Name of the parameter
 ]
