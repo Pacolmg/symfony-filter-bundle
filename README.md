@@ -61,10 +61,12 @@ It's the only mandatory parameter, and is composed by an array of different filt
 ```
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity,
+    'field' => Field of the Entity (Or fields, separated by comma) where search the value,
     'value' => Value to compare
 ]
 ```
+**The *field* is allow to have multiple values separated by a comma to search the same value in more than one field.
+
 
 #### Type of filters
 - `BaseRepository::FILTER_EXACT`: Compares that the field is equal to the value.
@@ -94,7 +96,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
 ]);
 ```
 
-Easy? So, now, we are gonna find the articles with a `tree` in the title and a `cat` in the body:
+Easy? So, now, we are gonna find the articles with a `tree` in the title and a `cat` in the title or in the body:
 
 ```
 $this->entityManager->getRepository('App:Article')->getAll([
@@ -105,7 +107,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'body',
+        'field': 'title,body',
         'value': 'cat'
     ]
 ]);
@@ -121,7 +123,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'body',
+        'field': 'title,body',
         'value': 'cat'
     ],
     [
@@ -148,7 +150,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'body',
+        'field': 'title,body',
         'value': 'cat'
     ],
     [
@@ -173,7 +175,7 @@ $this->entityManager->getRepository('App:Article')->getAllCount([
     ],
     [
         'type': BaseRepository::FILTER_LIKE,
-        'field': 'body',
+        'field': 'title,body',
         'value': 'cat'
     ],
     [
@@ -221,7 +223,7 @@ $this->filterService->getFiltered(
 	    ],
 	    [
 	        'type': BaseRepository::FILTER_LIKE,
-	        'field': 'body',
+	        'field': 'title,body',
 	        'value': 'cat'
 	    ],
 	    [
@@ -267,16 +269,16 @@ The method `getFilters` needs the `$request` and the `$filters` and will return 
 ```
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity,
+    'field' => Field of the Entity (Or fields separated by comma) where find the value,
     'request_type' => Type of the value
     'request_name' => Name of the parameter
 ]
 ```
 
 #### Request Types
-The types can be:
+The types of the *request_type* can be:
 - int
-- string
+- string *(default)*
 - bool
 - array
 
