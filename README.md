@@ -365,7 +365,7 @@ We still want to find the articles which title has a certain word that we will c
         {{ include('@PacolmgSymfonyFilter/filters/date.html.twig', {placeholder: 'To', name: 'to'}, with_context = false) }}
     </div>
     <div class="col-sm-2">
-        {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1' => 'Created', '2' => 'Published', '3' => 'Deleted'} }, with_context = false) }}
+        {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
     </div>
 {% endblock %}
 ```
@@ -408,7 +408,7 @@ Imagine you change your mind and prefer to get the articles that can be publishe
  ```
  ...
  <div class="col-sm-2">
-         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1' => 'Created', '2' => 'Published', '3' => 'Deleted'} }, with_context = false) }}
+         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
  </div>
  ...
  ```
@@ -424,5 +424,60 @@ Imagine you change your mind and prefer to get the articles that can be publishe
      ]
  ...
  ```
- 
-Hope that filter your entities with this bundle will not be a pain anymore.
+
+## Pagination
+
+So, at the Controller, Service and Repository is possible to get the results paginated. The bundle has also a twig to make pagination easy for development. Just include the *'@PacolmgSymfonyFilter/components/pagination.html.twig'* view and see the pages.
+
+### Parameters
+The mandatory parameters are:
+- **nbPages** (*int, mandatory*): The total number of pages.
+- **currentPage** (*int, mandatory*): The current page.
+- **url** (*string, mandatory*): The symfony route to redirect the pagination.
+- **params** (*array, mandatory*): The parameters that the the route will need to work (id, q, ...).
+
+The twig has some optional parameters too:
+- **nearbyPagesLimit** (*int, not mandatory*): Number of pages around the current page.
+    - The default value is 4.
+- **align** (*string, not mandatory*): The value has to be: "end", "center" or "start" (based on bootstrap flex).
+    - The default value is "end".
+- **classPageItem** (*string, not mandatory*): Class for the "li" tag.
+    - The default value is "page-item".
+- **classPageLink** (*string, not mandatory*): Class for the links.
+    - The default value is "page-link".
+- **classDisabled** (*string, not mandatory*): Class for the disabled pages.
+    - The default value is "disabled".
+- **classActive** (*string, not mandatory*): Class for current page.
+    - The default value is "active".
+    
+### Examples
+
+We have our article index page where we have the filters defined in the previous examples, now we want to show the number of the pages:
+
+To avoid too much logic on the twig, we construct the parameters in the Controller:
+
+```
+list($page, $limit) = $this->externalParametersService->getPageAndLimit($request);
+
+$filters = $this->entityManager->getRepository('App:Article')->getAll([
+    ...
+]);
+
+list($data, $totalData) = $this->filterService->getFiltered($filters);
+
+$paginationData = [
+            'nbPages' => ceil($data['total'] / $limit),
+            'currentPage' => $page,
+            'url' => $request->get('_route'),
+            'params' => $request->query->all()
+        ];
+
+```
+
+In the view:
+
+```
+{{ include('@PacolmgSymfonyFilter/components/pagination.html.twig', paginationData, with_context = false) }}
+```
+
+Hope that filter and paginate your entities with this bundle will not be a pain anymore.
