@@ -84,10 +84,11 @@ If the number of the results is needed, the method `getAllCount` will return tha
 $this->entityManager->getRepository('App:Article')->getAllCount($filters);
 ```
 
-### Examples
+
+#### Examples
 So, after this explanation of the filters that can be used, if we need the articles where has the word `tree` in its title, we should code:
 ```
-$this->entityManager->getRepository('App:Article')->getAll([
+$data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
         'field': 'title',
@@ -99,7 +100,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
 Easy? So, now, we are gonna find the articles with a `tree` in the title and a `cat` in the title or in the body:
 
 ```
-$this->entityManager->getRepository('App:Article')->getAll([
+$data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
         'field': 'title',
@@ -115,7 +116,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
 
 Too many results? If it's up to you, we will sort the results by `publishDate` and filter them, because we are only interested in the current year:
 ```
-$this->entityManager->getRepository('App:Article')->getAll([
+$data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
         'field': 'title',
@@ -142,7 +143,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
 Are there still many results? We should paginate it, we want to see the second page, showing 10 results per page:
 
 ```
-$this->entityManager->getRepository('App:Article')->getAll([
+$data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
         'field': 'title',
@@ -167,7 +168,7 @@ $this->entityManager->getRepository('App:Article')->getAll([
 ```
 If your are showing the results on a website, it's probably that you need the total number or elements in order to show it or to make a proper pagination, easy:
 ```
-$this->entityManager->getRepository('App:Article')->getAllCount([
+$totalResults = $this->entityManager->getRepository('App:Article')->getAllCount([
     [
         'type': BaseRepository::FILTER_LIKE,
         'field': 'title',
@@ -190,6 +191,20 @@ $this->entityManager->getRepository('App:Article')->getAllCount([
     ]
 ]);
 ```
+
+### Method getDistinctField
+Maybe the different values of a field are needed for filter a select, call the function with the name of the field as parameter.
+```
+$this->entityManager->getRepository('App:Article')->getAllCount($field);
+```
+
+#### Examples
+We need all the different authors of the entity to put them on a select:
+```
+$authors = $this->entityManager->getRepository('App:Article')->getAllCount('author');
+```
+
+
 
 ## Filter using the Service
 The bundle provide you a service:
