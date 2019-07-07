@@ -36,6 +36,11 @@ class BaseRepository extends ServiceEntityRepository
     const FILTER_DIFFERENT = 'different';
 
     /**
+     * Different formats for Distinct Function
+     */
+    const DISTINCT_FORMAT_ONLY_VALUES = 1;
+
+    /**
      * BaseRepository constructor.
      *
      * @param RegistryInterface $registry
@@ -80,7 +85,7 @@ class BaseRepository extends ServiceEntityRepository
                 $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias']);
                 $alreadyJoined[] = $this->alias . '.' . $filter['join'];
             }
-            
+
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
                     $fields = explode('|', $filter['field']);
@@ -227,7 +232,27 @@ class BaseRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
-    
+
+    /**
+     * Get distinct values for a $field
+     *
+     * @param string $field
+     * @param int|null $format
+     * @return mixed
+     */
+    public function getDistinctField(string $field, int $format = null)
+    {
+        $result = $this->createQueryBuilder($this->alias)->select('DISTINCT('.$this->alias.'.'.$field.') as '.$field)->getQuery()->execute();
+
+        if ($format == self::DISTINCT_FORMAT_ONLY_VALUES){
+            return array_map(function (array $distinctField) use ($field) {
+                return $distinctField[$field];
+            }, $result);
+        }
+
+        return $result;
+    }
+
     /**
      * Get the Alias of the repository
      * 
