@@ -23,7 +23,7 @@ $ composer  require  pacolmg/symfony-filter-bundle:"*@dev"
 
 ### Extend the Repository of the entity that need to be filtered
 
-For instance, in a entity called `Article`, in the repository, that should be in `src\Repository\ArticleRepository.php`:
+For instance, in a entity called `Article`, with a repository that should be in `src\Repository\ArticleRepository.php`:
 
 ```
 <?php
@@ -320,3 +320,109 @@ $filters = $this->entityManager->getRepository('App:Article')->getAll([
 
 list($data, $totalData) = $this->filterService->getFiltered($filters, $page, $limit);
 ```
+
+
+## Filter from the View
+
+The bundle wants to help you with the form in the view too, so you can include some fields that are predefined, or extend your complete form  "@PacolmgSymfonyFilter/filters/layout.html.twig":
+
+###Inputs
+The predefined fields are:
+- **Text Input**: @PacolmgSymfonyFilter/filters/input.html.twig
+- **Numer Input**: @PacolmgSymfonyFilter/filters/number.html.twig
+- **Datetime-local Input** (*Only works in chrome*): @PacolmgSymfonyFilter/filters/date.html.twig
+- **Select**: @PacolmgSymfonyFilter/filters/select.html.twig
+
+##### Parameters
+Each input has some common parameters:
+- **name** (*string, mandatory*): The attribute name for the input.
+- **id** (*string, not mandatory*): The id of the input, if it's not defined the id will be: *symfony_filter_form_****+name***.
+- **class** (*string, not mandatory*): The class of the input. If it's not defined will be *form-control*.
+- **placeholder** (*string, not mandatory*): The placeholder for the input.
+- **print_label** (*boolean, not mandatory*): Whether or not print the label of the field.
+- **label** (*string, not mandatory*): The label of the field, if it's not defined and *print_label* is true, the label will be the placeholder. Label could be written in HTML.
+- **defaultData** (*string|array|int, not mandatory*): The default value for the field.
+
+The *select* field type will have another two parameters, one of them *mandatory*:
+- **options** (*array, mandatory*): Array of options:
+   - The format of the array options is: [ value => text, value => text, ...]
+- **multiple** (*boolean, not mandatory*): Whether the select is multiple. False by default.
+
+### Examples
+
+We still want to find the articles which title has a certain word that we will collect from an input in the view. And we also want them filtered between two dates and by status too, so an example of form could be:
+
+```
+{% extends "@PacolmgSymfonyFilter/layout.html.twig" %}
+{% block pacolmg_symfony_filter_bundle_form_filters %}
+    <div class="col-sm-2">
+        {{ include('@PacolmgSymfonyFilter/filters/text.html.twig', {placeholder: 'Title', name: 't'}, with_context = false) }}
+    </div>
+    <div class="col-sm-2">
+        {{ include('@PacolmgSymfonyFilter/filters/date.html.twig', {placeholder: 'From', name: 'from'}, with_context = false) }}
+    </div>
+    <div class="col-sm-2">
+        {{ include('@PacolmgSymfonyFilter/filters/date.html.twig', {placeholder: 'To', name: 'to'}, with_context = false) }}
+    </div>
+    <div class="col-sm-2">
+        {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1' => 'Created', '2' => 'Published', '3' => 'Deleted'} }, with_context = false) }}
+    </div>
+{% endblock %}
+```
+
+This form will send the parameters just to catch them coding this:
+
+```
+$filters = $this->entityManager->getRepository('App:Article')->getAll([
+    [
+        'type': BaseRepository::FILTER_LIKE,
+        'field': 'title',
+        'request_type': 'string',
+        'request_name': 't'
+    ],
+    [
+        'type': BaseRepository::FILTER_GREATER_EQUAL,
+        'field': 'publishedAt',
+        'request_type': 'date',
+        'request_name': 'from'
+    ],
+    [
+        'type': BaseRepository::FILTER_LESS_EQUAL,
+        'field': 'publishedAt',
+        'request_type': 'date',
+        'request_name': 'to'
+    ],
+    [
+        'type': BaseRepository::FILTER_EXACT,
+         'field': 'status',
+         'request_type': 'int',
+         'request_name': 's'
+    ]
+]);
+
+list($data, $totalData) = $this->filterService->getFiltered($filters);
+```
+
+Imagine you change your mind and prefer to get the articles that can be published or created, so we need to convert the status select to multiple:
+
+ ```
+ ...
+ <div class="col-sm-2">
+         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1' => 'Created', '2' => 'Published', '3' => 'Deleted'} }, with_context = false) }}
+ </div>
+ ...
+ ```
+ 
+ And on the controller, change the type of the filter:
+ ```
+ ...
+     [
+         'type': BaseRepository::FILTER_IN,
+          'field': 'status',
+          'request_type': 'int',
+          'request_name': 's'
+     ]
+ ...
+ ```
+ 
+Hope that filter your entities with this bundle will not be a pain anymore.
