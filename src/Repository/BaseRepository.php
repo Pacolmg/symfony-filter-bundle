@@ -64,6 +64,9 @@ class BaseRepository extends ServiceEntityRepository
             return 0;
         }, $filters));
 
+        // Avoid join twice the same entity
+        $alreadyJoined = [];
+
         foreach ($filters as $filter) {
             //some fields has two filters, so the parameter can't be named like the field
             $filterFields[$filter['field']]++;
@@ -73,10 +76,11 @@ class BaseRepository extends ServiceEntityRepository
             $alias = isset($filter['own_alias']) ? $filter['own_alias'] : $this->alias;
 
             // join
-            if (isset($filter['join']) && isset($filter['own_alias'])) {
+            if (isset($filter['join']) && isset($filter['own_alias']) && !in_array($this->alias . '.' . $filter['join'], $alreadyJoined)) {
                 $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias']);
+                $alreadyJoined[] = $this->alias . '.' . $filter['join'];
             }
-
+            
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
                     $fields = explode('|', $filter['field']);
