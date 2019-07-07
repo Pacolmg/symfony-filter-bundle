@@ -1,16 +1,21 @@
-{% if defaultData is not defined %}
-    {%  set defaultData = app.request.get(value) %}
-{% endif %}
-<div class="form-group">
-    {% if print_label is defined and print_label == true %}<label>{{ (label is defined ? label : name)|raw }}</label>{% endif %}
-    <select class="form-control {{ class is defined and class != '' ? class : '' }}" name="{{ value }}{{ multiple is defined and multiple == true ? '[]': '' }}" {{ multiple is defined and multiple == true ? 'multiple': '' }}>
-        <option value="">{{ name }}</option>
+{% extends "@PacolmgSymfonyFilter/filters/layout_input.html.twig" %}
+{% block pacolmg_symfony_filter_bundle_filter_input %}
+    <select id="{{ id is defined ? id : 'symfony_filter_form_'~name }}"
+           class="{{ class is defined ? class : 'form-control' }}"
+           name="{{ name }}{{ multiple is defined and multiple == true ? '[]': '' }}"
+           {% if multiple is defined and multiple == true %}
+               multiple
+           {% endif %}
+           >
+        {% if placeholder is defined %} 
+            <option value="">{{ placeholder }}</option>
+        {% endif %}
         {% for key,option in options %}
             {% if multiple is defined and multiple == true %}
-                <option value="{{ key }}" {{ key in defaultData ? 'selected' : '' }}>{{ option }}</option>
+                <option value="{{ key }}" {{ key in value ? 'selected' : '' }}>{{ option }}</option>
             {% else %}
-                <option value="{{ key }}" {{ key == defaultData ? 'selected' : '' }}>{{ option }}</option>
+                <option value="{{ key }}" {{ key == value ? 'selected' : '' }}>{{ option }}</option>
             {% endif %}
         {% endfor %}
     </select>
-</div>
+{% endblock %}

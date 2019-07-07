@@ -1,0 +1,26 @@
+{# Default vars #}
+{% set value = '' %}
+{% set multiple = multiple is defined ? multiple : false %}
+{% set options = options is defined ? options : [] %}
+
+{# Get the value from the Request #}
+{% if app.request.get(name) %}
+    {%  set value = app.request.get(name) %}
+{% elseif defaultData is defined %}
+    {% set value = defaultData %}
+{% endif %}
+
+{# Print the field #}
+<div class="form-group">
+    {% if print_label is defined and print_label == true %}
+        <label>{{ (label is defined ? label : (placeholder is defined ? placeholder : '' ))|raw }}</label>{% endif %}
+    {% block pacolmg_symfony_filter_bundle_filter_input %}    
+    <input placeholder="{{ placeholder is defined ? placeholder : '' }}" 
+           id="{{ id is defined ? id : 'symfony_filter_form_'~name }}"
+           class="{{ class is defined ? class : 'form-control' }}"
+           type="{% block pacolmg_symfony_filter_bundle_filter_input_type %}{% endblock %}" 
+           name="{{ name }}"
+           value="{{ value }}"
+           autocomplete="off">
+    {% endblock %}
+</div>
