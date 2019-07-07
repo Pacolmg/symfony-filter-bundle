@@ -1,3 +1,24 @@
+{#
+    PacolmgSymfonyFilterBundle
+    Layout Input
+
+    Mandatory Parameters:
+      * name (string): name of the input
+
+    Optional Parameters:
+      * id (int): id of the input.
+        - Default id: symfony_filter_form~name
+      * class: Class for the input.
+        - Default: form-control (bootstrap class)
+      * placeholder (string): Placeholder for the input.
+      * print_label (boolean): Whether print the label (or placeholder if label is not defined).
+      * label (string): Label for the input.
+      * defaultData (string|in|array): Default value for the input in case is not received from app.Request.
+      * options (array): In select case the options for the select.
+        - Example: {'1': 'Option 1', '2': 'Option 2', '3': 'Option 3'}
+      * multiple (boolean): In select case whether is a multiple field.
+#}
+
 {# Default vars #}
 {% set value = '' %}
 {% set multiple = multiple is defined ? multiple : false %}

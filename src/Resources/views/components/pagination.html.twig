@@ -1,0 +1,66 @@
+{#
+    PacolmgSymfonyFilterBundle
+    Pagination
+
+    Mandatory Parameters:
+      * nbPages (int): number of pages
+      * currentPage (int): current pages
+      * url (string): Symfony route name
+      * params (array): route parameters
+        - Example: {'foo': 'bar'}
+        - After clicking on a page the params will be: {'foo': 'bar', 'page': 'n'}
+
+    Optional Parameters:
+      * nearbyPagesLimit: number of pages around the current page
+        - Default 4
+      * align: could be "end", "center" or "start" (based on bootstrap flex)
+        - Default: end
+      * classPageItem (string): Class for the "li" tag.
+        - Default: page-item
+      * classPageLink (string): Class for the links.
+        - Default: page-link
+      * classDisabled (string): Class for the disabled paged.
+        - Default: disabled
+      * classActive (string): Class for the active page.
+        - Default: active
+
+    Blocks:
+      * pacolmg_symfony_filter_bundle_pagination_class_box
+      ** pacolmg_symfony_filter_bundle_pagination_ul
+#}
+
+
+{% if nbPages > 1 %}
+    {# Number of page around current page #}
+    {% set nearbyPagesLimit = nearbyPagesLimit is defined ? nearbyPagesLimit : 4 %}
+
+    <div class="{% block pacolmg_symfony_filter_bundle_pagination_class_box %}{% endblock %}">
+        <ul class="{% block pacolmg_symfony_filter_bundle_pagination_ul %}pagination d-flex justify-content-{{ align is defined ? align : 'end' }}{% endblock %}">
+            {% if currentPage != 1 %}
+                {% set params = params|merge({'page': 1}) %}
+                <li class="{{ classPageItem is defined ? classPageItem : 'page-item' }}"><a href="{{ path(url, params) }}" class="{{ classPageLink is defined ? classPageLink : 'page-link' }}"><i
+                                class="fa fa-step-backward"></i></a></li>
+            {% endif %}
+            {% for i in 1..nbPages %}
+                {% if 0 == (currentPage - nearbyPagesLimit) - loop.index %} {# dot before #}
+                    <li class="{{ classDisabled is defined ? classDisabled : 'disabled' }} {{ classPageItem is defined ? classPageItem : 'page-item' }}"><a href="#">...</a></li>
+                {% elseif 0 == (currentPage + nearbyPagesLimit) - loop.index %} {# dot after #}
+                    <li class="{{ classDisabled is defined ? classDisabled : 'disabled' }} {{ classPageItem is defined ? classPageItem : 'page-item' }}"><a href="#">...</a></li>
+                {% elseif 0 < (currentPage - nearbyPagesLimit) - loop.index %} {# hide all before #}
+                {% elseif 0 > (currentPage + nearbyPagesLimit) - loop.index %} {# hide all after #}
+                {% else %}
+                    <li {% if currentPage == loop.index %} class="{{ classPageItem is defined ? classPageItem : 'page-item' }} {{ classActive is defined ? classActive : 'active' }}"{% endif %}>
+                        {% set params = params|merge({'page': loop.index}) %}
+                        <a href="{{ path(url, params) }}" class="{{ classPageLink is defined ? classPageLink : 'page-link' }}">{{ loop.index }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if currentPage != nbPages %}
+                <li class="{{ classPageItem is defined ? classPageItem : 'page-item' }}">
+                    {% set params = params|merge({'page': nbPages}) %}
+                    <a href="{{ path(url, params) }}" class="{{ classPageLink is defined ? classPageLink : 'page-link' }}"><i class="fa fa-step-forward"></i></a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endif %}
