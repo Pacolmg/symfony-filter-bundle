@@ -79,14 +79,14 @@ class BaseRepository extends ServiceEntityRepository
 
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
-                    $fields = explode(',', $filter['field']);
+                    $fields = explode('|', $filter['field']);
                     $sql = '';
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $alias . '.' . $field . ' = :' . $field . '_filter_' . $rnd;
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
                     }
                     $qb->andWhere($sql);
                     foreach ($fields as $field) {
-                        $qb->setParameter($field . '_filter_' . $rnd, $filter['value']);
+                        $qb->setParameter($this->getParameterName($field, $rnd), $filter['value']);
                     }
                     break;
                 case self::FILTER_EXACT_MULTIPLE:
@@ -117,38 +117,38 @@ class BaseRepository extends ServiceEntityRepository
                     }
                     break;
                 case self::FILTER_IN:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' IN (:' . $filter['field'] . '_filter_' . $rnd . ')');
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' IN (:' . $this->getParameterName($filter['field'], $rnd) . ')');
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 case self::FILTER_GREATER:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' > :' . $filter['field'] . '_filter_' . $rnd);
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' > :' . $this->getParameterName($filter['field'], $rnd));
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 case self::FILTER_GREATER_EQUAL:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' >= :' . $filter['field'] . '_filter_' . $rnd);
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' >= :' . $this->getParameterName($filter['field'], $rnd));
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 case self::FILTER_LESS:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' < :' . $filter['field'] . '_filter_' . $rnd);
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' < :' . $this->getParameterName($filter['field'], $rnd));
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 case self::FILTER_LESS_EQUAL:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' <= :' . $filter['field'] . '_filter_' . $rnd);
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' <= :' . $this->getParameterName($filter['field'], $rnd));
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 case self::FILTER_DIFFERENT:
-                    $qb->andWhere($alias . '.' . $filter['field'] . ' != :' . $filter['field'] . '_filter_' . $rnd);
-                    $qb->setParameter($filter['field'] . '_filter_' . $rnd, $filter['value']);
+                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' != :' . $this->getParameterName($filter['field'], $rnd));
+                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
                     break;
                 default:
-                    $fields = explode(',', $filter['field']);
+                    $fields = explode('|', $filter['field']);
                     $sql = '';
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $alias . '.' . $field . ' LIKE :' . $field . '_filter_' . $rnd;
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' LIKE :' . $this->getParameterName($field, $rnd);
                     }
                     $qb->andWhere($sql);
                     foreach ($fields as $field) {
-                        $qb->setParameter($field . '_filter_' . $rnd, '%' . $filter['value'] . '%');
+                        $qb->setParameter($this->getParameterName($field, $rnd), '%' . $filter['value'] . '%');
                     }
             }
         }
@@ -223,4 +223,42 @@ class BaseRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+    
+    /**
+     * Get the Alias of the repository
+     * 
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * Clean the string of the parameterName
+     * 
+     * @param string $field
+     * @param string $ext
+     * @return mixed
+     */
+    private function getParameterName(string $field, string $ext)
+    {
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $field).'_filter_'.$ext;
+    }
+
+    /**
+     * Concat the alias to the field in case is needed
+     *
+     * @param string $alias
+     * @param string $field
+     * @return string
+     */
+    private function getFieldString(string $alias, string $field)
+    {
+        if ($alias === '') {
+            return $field;
+        }
+
+        return $alias . '.' . $field;
+    }    
 }
