@@ -36,11 +36,6 @@ class BaseRepository extends ServiceEntityRepository
     const FILTER_DIFFERENT = 'different';
 
     /**
-     * Different formats for Distinct Function
-     */
-    const DISTINCT_FORMAT_ONLY_VALUES = 1;
-
-    /**
      * BaseRepository constructor.
      *
      * @param RegistryInterface $registry
@@ -107,7 +102,7 @@ class BaseRepository extends ServiceEntityRepository
                         if ($countFields == 1) {
                             continue;
                         }
-                        $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias'].$countFields);
+                        $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias'] . $countFields);
                     }
 
                     // Make the conditions
@@ -226,7 +221,7 @@ class BaseRepository extends ServiceEntityRepository
      */
     public function getAllCount(array $filters)
     {
-        $qb = $this->createQueryBuilder($this->alias)->select('count('.$this->alias.'.id)');
+        $qb = $this->createQueryBuilder($this->alias)->select('count(' . $this->alias . '.id)');
 
         $this->setFilters($qb, $filters);
 
@@ -237,25 +232,20 @@ class BaseRepository extends ServiceEntityRepository
      * Get distinct values for a $field
      *
      * @param string $field
-     * @param int|null $format
      * @return mixed
      */
-    public function getDistinctField(string $field, int $format = null)
+    public function getDistinctField(string $field)
     {
-        $result = $this->createQueryBuilder($this->alias)->select('DISTINCT('.$this->alias.'.'.$field.') as '.$field)->getQuery()->execute();
+        $result = $this->createQueryBuilder($this->alias)->select('DISTINCT(' . $this->alias . '.' . $field . ') as ' . $field)->getQuery()->execute();
 
-        if ($format == self::DISTINCT_FORMAT_ONLY_VALUES){
-            return array_map(function (array $distinctField) use ($field) {
-                return $distinctField[$field];
-            }, $result);
-        }
-
-        return $result;
+        return array_map(function (array $distinctField) use ($field) {
+            return $distinctField[$field];
+        }, $result);
     }
 
     /**
      * Get the Alias of the repository
-     * 
+     *
      * @return string
      */
     public function getAlias()
@@ -265,14 +255,14 @@ class BaseRepository extends ServiceEntityRepository
 
     /**
      * Clean the string of the parameterName
-     * 
+     *
      * @param string $field
      * @param string $ext
      * @return mixed
      */
     private function getParameterName(string $field, string $ext)
     {
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $field).'_filter_'.$ext;
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $field) . '_filter_' . $ext;
     }
 
     /**
@@ -289,5 +279,5 @@ class BaseRepository extends ServiceEntityRepository
         }
 
         return $alias . '.' . $field;
-    }    
+    }
 }
