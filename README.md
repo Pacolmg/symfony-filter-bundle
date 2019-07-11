@@ -4,21 +4,20 @@ This bundle provides your Symfony 4 app some functions to filter and make lists 
 
 License [MIT](https://raw.githubusercontent.com/Pacolmg/symfony-filter-bundle/master/LICENSE)
 
-## Installation
-
-### Add the repository to your composer.json
-```
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "git@github.com:Pacolmg/symfony-filter-bundle.git"
-    }
-]
-```
+# Installation
 
 ### Add the package to composer via console
 ```bash
-$ composer  require  pacolmg/symfony-filter-bundle:"*@dev"
+$ composer  require  pacolmg/symfony-filter-bundle
+```
+
+### Add the Bundle to config/bundles.php
+Probably you can skip this step, because Symfony Flex do it automatically. But just in case, go to the file `config\bundles.php` and check that this line is in the code:
+
+```
+...
+Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle::class => ['all' => true],
+...
 ```
 
 ### Extend the Repository of the entity that need to be filtered
@@ -40,6 +39,8 @@ class  ArticleRepository  extends  BaseRepository
 Now, the installation is finished and the `Article` repository will have new methods in order to find objects filtered by different fields and in different ways (like, greater than, ...)
 
 **Multiple repositories can be extended.**
+
+# Usage
 
 ## Start Filtering the Repository
 
