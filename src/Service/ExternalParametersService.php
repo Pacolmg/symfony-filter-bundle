@@ -95,7 +95,9 @@ class ExternalParametersService
                     $arrayFilters[$k]['value'] = array_filter((array)$request->get($filter['request_name']), function ($value) {
                         return !empty($value);
                     });
-
+                    break;
+                case 'date':
+                    $arrayFilters[$k]['value'] = new \DateTime($request->get($filter['request_name']));
                     break;
                 default:
                     $arrayFilters[$k]['value'] = trim((string)$request->get($filter['request_name']));
