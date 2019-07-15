@@ -297,6 +297,7 @@ The types of the *request_type* can be:
 - string *(default)*
 - bool
 - array
+- date
 
 
 ### Examples
