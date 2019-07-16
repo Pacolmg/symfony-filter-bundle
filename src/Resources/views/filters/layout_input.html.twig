@@ -14,6 +14,9 @@
       * print_label (boolean): Whether print the label (or placeholder if label is not defined).
       * label (string): Label for the input.
       * defaultData (string|in|array): Default value for the input in case is not received from app.Request.
+      * attrs (array): Attributes for the input.
+        - Example: {'data-format': 'Y-m-d H:i', 'data-datetimepicker': '1'}
+            - This will be transformed to <input data-format="Y-m-d H:i" data-datetimepicker="1" .../>
       * options (array): In select case the options for the select.
         - Example: {'1': 'Option 1', '2': 'Option 2', '3': 'Option 3'}
       * multiple (boolean): In select case whether is a multiple field.
@@ -37,11 +40,16 @@
         <label>{{ (label is defined ? label : (placeholder is defined ? placeholder : '' ))|raw }}</label>{% endif %}
     {% block pacolmg_symfony_filter_bundle_filter_input %}    
     <input placeholder="{{ placeholder is defined ? placeholder : '' }}" 
-           id="{{ id is defined ? id : 'symfony_filter_form_'~name }}"
-           class="{{ class is defined ? class : 'form-control' }}"
-           type="{% block pacolmg_symfony_filter_bundle_filter_input_type %}{% endblock %}" 
-           name="{{ name }}"
-           value="{{ value }}"
-           autocomplete="off">
+          id="{{ id is defined ? id : 'symfony_filter_form_'~name }}"
+          class="{{ class is defined ? class : 'form-control' }}"
+          type="{% block pacolmg_symfony_filter_bundle_filter_input_type %}{% endblock %}" 
+          name="{{ name }}"
+          value="{{ value }}"
+          {% if attrs is defined %}
+              {% for attr, attr_value in attrs %}
+                  {{ attr }}="{{ attr_value }}"
+              {% endfor %}
+          {% endif %}
+          autocomplete="off">
     {% endblock %}
 </div>
