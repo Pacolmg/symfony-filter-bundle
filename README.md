@@ -359,6 +359,7 @@ Each input has some common parameters:
 - **print_label** (*boolean, not mandatory*): Whether or not print the label of the field.
 - **label** (*string, not mandatory*): The label of the field, if it's not defined and *print_label* is true, the label will be the placeholder. Label could be written in HTML.
 - **defaultData** (*string|array|int, not mandatory*): The default value for the field.
+- **attrs** (*array*): Optional attributes for the input.
 
 The *select* field type will have another two parameters, one of them *mandatory*:
 - **options** (*array, mandatory*): Array of options:
