@@ -80,10 +80,16 @@ class ExternalParametersService
      * @param Request $request
      * @param array $arrayFilters
      * @return array
+     * @throws \Exception
      */
     public function getFilters(Request $request, array $arrayFilters = [])
     {
         foreach ($arrayFilters as $k => $filter) {
+            if (is_null($request->get($filter['request_name'])) || $request->get($filter['request_name']) === '') {
+                unset($arrayFilters[$k]);
+                continue;
+            }
+
             switch ($filter['request_type']) {
                 case 'int':
                     $arrayFilters[$k]['value'] = (int)$request->get($filter['request_name']);
