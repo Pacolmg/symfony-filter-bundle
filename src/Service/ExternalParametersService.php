@@ -2,8 +2,9 @@
 
 namespace Pacolmg\SymfonyFilterBundle\Service;
 
-use Pacolmg\SymfonyFilterBundle\Repository\BaseRepository;
 use Symfony\Component\HttpFoundation\Request;
+use DateTime;
+use Exception;
 
 /**
  * Class externalParametersService
@@ -80,7 +81,6 @@ class ExternalParametersService
      * @param Request $request
      * @param array $arrayFilters
      * @return array
-     * @throws \Exception
      */
     public function getFilters(Request $request, array $arrayFilters = [])
     {
@@ -89,24 +89,28 @@ class ExternalParametersService
                 unset($arrayFilters[$k]);
                 continue;
             }
-
-            switch ($filter['request_type']) {
-                case 'int':
-                    $arrayFilters[$k]['value'] = (int)$request->get($filter['request_name']);
-                    break;
-                case 'bool':
-                    $arrayFilters[$k]['value'] = ($request->get($filter['request_name']) === 'true' ? true : ($request->get($filter['request_name']) === 'false' ? false : ''));
-                    break;
-                case 'array':
-                    $arrayFilters[$k]['value'] = array_filter((array)$request->get($filter['request_name']), function ($value) {
-                        return !empty($value);
-                    });
-                    break;
-                case 'date':
-                    $arrayFilters[$k]['value'] = new \DateTime($request->get($filter['request_name']));
-                    break;
-                default:
-                    $arrayFilters[$k]['value'] = trim((string)$request->get($filter['request_name']));
+            
+            try {
+                switch ($filter['request_type']) {
+                    case 'int':
+                        $arrayFilters[$k]['value'] = (int)$request->get($filter['request_name']);
+                        break;
+                    case 'bool':
+                        $arrayFilters[$k]['value'] = ($request->get($filter['request_name']) === 'true' ? true : ($request->get($filter['request_name']) === 'false' ? false : ''));
+                        break;
+                    case 'array':
+                        $arrayFilters[$k]['value'] = array_filter((array)$request->get($filter['request_name']), function ($value) {
+                            return !empty($value);
+                        });
+                        break;
+                    case 'date':
+                        $arrayFilters[$k]['value'] = new DateTime($request->get($filter['request_name']));
+                        break;
+                    default:
+                        $arrayFilters[$k]['value'] = trim((string)$request->get($filter['request_name']));
+                }
+            } catch (Exception $e) {
+                $arrayFilters[$k]['value'] = $request->get($filter['request_name']);
             }
         }
 
