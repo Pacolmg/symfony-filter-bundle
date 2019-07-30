@@ -14,7 +14,7 @@ $ composer  require  pacolmg/symfony-filter-bundle
 ### Add the Bundle to config/bundles.php
 Probably you can skip this step, because Symfony Flex do it automatically. But just in case, go to the file `config\bundles.php` and check that this line is in the code:
 
-```
+```php
 ...
 Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle::class => ['all' => true],
 ...
@@ -24,7 +24,7 @@ Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle::class => ['all' => true]
 
 For instance, in a entity called `Article`, with a repository that should be in `src\Repository\ArticleRepository.php`:
 
-```
+```php
 <?php
 namespace  App\Repository;
 
@@ -46,7 +46,7 @@ Now, the installation is finished and the `Article` repository will have new met
 
 ### Method getAll
 To filter the objects method `getAll` from the repository extended should be called:
-```
+```php
 $this->entityManager->getRepository('App:Article')->getAll($filters, $orderBy, $limit, $offset);
 ```
 #### Parameters
@@ -59,7 +59,7 @@ $this->entityManager->getRepository('App:Article')->getAll($filters, $orderBy, $
 
 ##### The parameter $filter
 It's the only mandatory parameter, and is composed by an array of different filters with the format:
-```
+```php
 [
     'type' => Constant that defines the behaviour,
     'field' => Field of the Entity (Or fields, separated by pipe ("|")) where search the value,
@@ -81,14 +81,14 @@ It's the only mandatory parameter, and is composed by an array of different filt
 
 ### Method getAllCount
 If the number of the results is needed, the method `getAllCount` will return that number, just the pass the filters to the method.
-```
+```php
 $this->entityManager->getRepository('App:Article')->getAllCount($filters);
 ```
 
 
 #### Examples
 So, after this explanation of the filters that can be used, if we need the articles where has the word `tree` in its title, we should code:
-```
+```php
 $data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -100,7 +100,7 @@ $data = $this->entityManager->getRepository('App:Article')->getAll([
 
 Easy? So, now, we are gonna find the articles with a `tree` in the title and a `cat` in the title or in the body:
 
-```
+```php
 $data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -116,7 +116,7 @@ $data = $this->entityManager->getRepository('App:Article')->getAll([
 ```
 
 Too many results? If it's up to you, we will sort the results by `publishDate` and filter them, because we are only interested in the current year:
-```
+```php
 $data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -143,7 +143,7 @@ $data = $this->entityManager->getRepository('App:Article')->getAll([
 
 Are there still many results? We should paginate it, we want to see the second page, showing 10 results per page:
 
-```
+```php
 $data = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -168,7 +168,7 @@ $data = $this->entityManager->getRepository('App:Article')->getAll([
 ], ['publishDate' => 'DESC'], 2, 10);
 ```
 If your are showing the results on a website, it's probably that you need the total number or elements in order to show it or to make a proper pagination, easy:
-```
+```php
 $totalResults = $this->entityManager->getRepository('App:Article')->getAllCount([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -195,13 +195,13 @@ $totalResults = $this->entityManager->getRepository('App:Article')->getAllCount(
 
 ### Method getDistinctField
 Maybe the different values of a field are needed for filter a select, call the function with the name of the field as parameter.
-```
+```php
 $this->entityManager->getRepository('App:Article')->getAllCount($field);
 ```
 
 #### Examples
 We need all the different authors of the entity to put them on a select:
-```
+```php
 $authors = $this->entityManager->getRepository('App:Article')->getAllCount('author');
 ```
 
@@ -215,7 +215,7 @@ Within this service the methods of the repository `getAll` and `getAllCount` are
 
 **The sort parameter has a different format** in order to pass the field and the direction, avoiding code an array.
 
-```
+```php
 $this->filterService->getFiltered(
 	$repository,
 	$filters,
@@ -228,7 +228,7 @@ $this->filterService->getFiltered(
 
 ### Examples
 The last of the examples, coding from a Service or a Controller could be:
-```
+```php
 $this->filterService->getFiltered(
 	$this->entityManager->getRepository('App:Article'),
 	[
@@ -261,7 +261,7 @@ $this->filterService->getFiltered(
 ```
 
 This example will return an array with two keys:
-```
+```php
 [
 	'data' => colection of objects,
 	'total' => Total number of elements filtered by $filters
@@ -282,7 +282,7 @@ In the Controller we can code this and the variable `$page` and `$limit` will ha
 
 ### Get Filters
 The method `getFilters` needs the `$request` and the `$filters` and will return the value for them, in order to make it work, we need to add a pair of fields to each filter:
-```
+```php
 [
     'type' => Constant that defines the behaviour,
     'field' => Field of the Entity (Or fields separated by pipe ("|")) where find the value,
@@ -305,7 +305,7 @@ We have have a website with a search input that send the controller a parameter 
 ```http://mywebsite.com?t=tree```
 
 In the Controller we should code:
-```
+```php
 $filters = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -323,7 +323,7 @@ In the next example we have parameters for the pagination:
 `http://mywebsite.com?t=tree&page=2&limit=10`
 
 So, this will be the code in the Controller:
-```
+```php
 list($page, $limit) = $this->externalParametersService->getPageAndLimit($request);
 
 $filters = $this->entityManager->getRepository('App:Article')->getAll([
@@ -370,7 +370,7 @@ The *select* field type will have another two parameters, one of them *mandatory
 
 We still want to find the articles which title has a certain word that we will collect from an input in the view. And we also want them filtered between two dates and by status too, so an example of form could be:
 
-```
+```php
 {% extends "@PacolmgSymfonyFilter/layout.html.twig" %}
 {% block pacolmg_symfony_filter_bundle_form_filters %}
     <div class="col-sm-2">
@@ -390,7 +390,7 @@ We still want to find the articles which title has a certain word that we will c
 
 This form will send the parameters just to catch them coding this:
 
-```
+```php
 $filters = $this->entityManager->getRepository('App:Article')->getAll([
     [
         'type': BaseRepository::FILTER_LIKE,
@@ -423,7 +423,7 @@ list($data, $totalData) = $this->filterService->getFiltered($filters);
 
 Imagine you change your mind and prefer to get the articles that can be published or created, so we need to convert the status select to multiple:
 
- ```
+ ```html
  ...
  <div class="col-sm-2">
          {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
@@ -432,7 +432,7 @@ Imagine you change your mind and prefer to get the articles that can be publishe
  ```
  
  And on the controller, change the type of the filter:
- ```
+ ```php
  ...
      [
          'type': BaseRepository::FILTER_IN,
@@ -474,7 +474,7 @@ We have our article index page where we have the filters defined in the previous
 
 To avoid too much logic on the twig, we construct the parameters in the Controller:
 
-```
+```php
 list($page, $limit) = $this->externalParametersService->getPageAndLimit($request);
 
 $filters = $this->entityManager->getRepository('App:Article')->getAll([
@@ -494,7 +494,7 @@ $paginationData = [
 
 In the view:
 
-```
+```html
 {{ include('@PacolmgSymfonyFilter/components/pagination.html.twig', paginationData, with_context = false) }}
 ```
 
