@@ -81,6 +81,18 @@ class BaseRepository extends ServiceEntityRepository
                 $alreadyJoined[] = $this->alias . '.' . $filter['join'];
             }
 
+            // nested joins
+            if (isset($filter['nested_joins']) && isset($filter['own_alias']) && is_array($filter['nested_joins'])) {
+                $entityAlias = $this->alias;
+                foreach($filter['nested_joins'] as $entityName => $entityValue) {
+                    if (!in_array($entityAlias.'.'.$entityName, $alreadyJoined)) {
+                        $qb->join($entityAlias .'.'.$entityName, isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias']);
+                        $alreadyJoined[] = $entityAlias . '.' . $entityName;
+                        $entityAlias = isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias'];
+                    }
+                }
+            }
+            
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
                     $fields = explode('|', $filter['field']);
