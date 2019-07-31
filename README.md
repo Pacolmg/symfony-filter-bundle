@@ -370,7 +370,7 @@ The *select* field type will have another two parameters, one of them *mandatory
 
 We still want to find the articles which title has a certain word that we will collect from an input in the view. And we also want them filtered between two dates and by status too, so an example of form could be:
 
-{% raw %}
+```twig
 {% extends "@PacolmgSymfonyFilter/layout.html.twig" %}
 {% block pacolmg_symfony_filter_bundle_form_filters %}
     <div class="col-sm-2">
@@ -386,7 +386,7 @@ We still want to find the articles which title has a certain word that we will c
         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
     </div>
 {% endblock %}
-{% endraw %}
+```
 
 This form will send the parameters just to catch them coding this:
 
