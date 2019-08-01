@@ -62,16 +62,16 @@ It's the only mandatory parameter, and is composed by an array of different filt
 ```php
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields, separated by pipe ("|")) where search the value,
+    'field' => Field of the Entity (Or fields, separated by pipe (<code>&#124;</code>)) where search the value,
     'value' => Value to compare
 ]
 ```
-**The *field* is allow to have multiple values separated by a pipe "|" to search the same value in more than one field.
+<code>&ast;&ast;</code>The *field* is allow to have multiple values separated by a pipe <code>&#124;</code> to search the same value in more than one field.
 
 
 #### Type of filters
-- `BaseRepository::FILTER_EXACT`: Compares that the field is equal to the value. Admit several fields separated by pipe ("|").
-- `BaseRepository::FILTER_LIKE`: Compares that the field is like the value. Admit several fields separated by pipe ("|").
+- `BaseRepository::FILTER_EXACT`: Compares that the field is equal to the value. Admit several fields separated by pipe (<code>&#124;</code>).
+- `BaseRepository::FILTER_LIKE`: Compares that the field is like the value. Admit several fields separated by pipe (<code>&#124;</code>).
 - `BaseRepository::FILTER_IN`: Search in array of values, the field.
 - `BaseRepository::FILTER_GREATER`: Compares that the field is greater than the value.
 - `BaseRepository::FILTER_GREATER_EQUAL`: Compares that the field is greater or equal than the value.
@@ -285,7 +285,7 @@ The method `getFilters` needs the `$request` and the `$filters` and will return 
 ```php
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields separated by pipe ("|")) where find the value,
+    'field' => Field of the Entity (Or fields separated by pipe (<code>&#124;</code>)) where find the value,
     'request_type' => Type of the value
     'request_name' => Name of the parameter
 ]
