@@ -372,7 +372,8 @@ The *select* field type will have another two parameters, one of them *mandatory
 
 We still want to find the articles which title has a certain word that we will collect from an input in the view. And we also want them filtered between two dates and by status too, so an example of form could be:
 
-<code>
+```html
+{% raw %}
 {% extends "@PacolmgSymfonyFilter/layout.html.twig" %}
 {% block pacolmg_symfony_filter_bundle_form_filters %}
     <div class="col-sm-2">
@@ -388,7 +389,8 @@ We still want to find the articles which title has a certain word that we will c
         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
     </div>
 {% endblock %}
-</code>
+{% endraw %}
+```
 
 This form will send the parameters just to catch them coding this:
 
@@ -425,14 +427,15 @@ list($data, $totalData) = $this->filterService->getFiltered($filters);
 
 Imagine you change your mind and prefer to get the articles that can be published or created, so we need to convert the status select to multiple:
 
- <code>
+ ```html
  ...
  <div class="col-sm-2">
+         {% raw %}
          {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
          {% endraw %}
  </div>
  ...
- </code>
+ ```
  
  And on the controller, change the type of the filter:
  ```php
@@ -497,8 +500,10 @@ $paginationData = [
 
 In the view:
 
-<code>
+```html
+{% raw %}
 {{ include('@PacolmgSymfonyFilter/components/pagination.html.twig', paginationData, with_context = false) }}
-</code>
+{% endraw %}
+```
 
 Hope that filter and paginate your entities with this bundle will not be a pain anymore.
