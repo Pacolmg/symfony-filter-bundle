@@ -302,9 +302,11 @@ The types of the *request_type* can be:
 
 ### Examples
 We have have a website with a search input that send the controller a parameter `t` with the value of the input, and we want to use this to look for a title like the parameter `t`:
-```http://mywebsite.com?t=tree```
+
+`http://mywebsite.com?t=tree`
 
 In the Controller we should code:
+
 ```php
 $filters = $this->entityManager->getRepository('App:Article')->getAll([
     [
@@ -358,7 +360,7 @@ Each input has some common parameters:
 - **placeholder** (*string, not mandatory*): The placeholder for the input.
 - **print_label** (*boolean, not mandatory*): Whether or not print the label of the field.
 - **label** (*string, not mandatory*): The label of the field, if it's not defined and *print_label* is true, the label will be the placeholder. Label could be written in HTML.
-- **defaultData** (*string|array|int, not mandatory*): The default value for the field.
+- **defaultData** (*string<code>&#124;</code>array<code>&#124;</code>int, not mandatory*): The default value for the field.
 - **attrs** (*array*): Optional attributes for the input.
 
 The *select* field type will have another two parameters, one of them *mandatory*:
@@ -370,8 +372,7 @@ The *select* field type will have another two parameters, one of them *mandatory
 
 We still want to find the articles which title has a certain word that we will collect from an input in the view. And we also want them filtered between two dates and by status too, so an example of form could be:
 
-```html
-{% raw %}
+<code>
 {% extends "@PacolmgSymfonyFilter/layout.html.twig" %}
 {% block pacolmg_symfony_filter_bundle_form_filters %}
     <div class="col-sm-2">
@@ -387,8 +388,7 @@ We still want to find the articles which title has a certain word that we will c
         {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
     </div>
 {% endblock %}
-{% endraw %}
-```
+</code>
 
 This form will send the parameters just to catch them coding this:
 
@@ -425,15 +425,14 @@ list($data, $totalData) = $this->filterService->getFiltered($filters);
 
 Imagine you change your mind and prefer to get the articles that can be published or created, so we need to convert the status select to multiple:
 
- ```html
+ <code>
  ...
  <div class="col-sm-2">
-         {% raw %}
          {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
          {% endraw %}
  </div>
  ...
- ```
+ </code>
  
  And on the controller, change the type of the filter:
  ```php
@@ -498,10 +497,8 @@ $paginationData = [
 
 In the view:
 
-```html
-{% raw %}
+<code>
 {{ include('@PacolmgSymfonyFilter/components/pagination.html.twig', paginationData, with_context = false) }}
-{% endraw %}
-```
+</code>
 
 Hope that filter and paginate your entities with this bundle will not be a pain anymore.
