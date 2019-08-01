@@ -62,7 +62,7 @@ It's the only mandatory parameter, and is composed by an array of different filt
 ```php
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields, separated by pipe (|) where search the value,
+    'field' => Field of the Entity (Or fields, separated by pipe ("|")) where search the value,
     'value' => Value to compare
 ]
 ```
@@ -285,7 +285,7 @@ The method `getFilters` needs the `$request` and the `$filters` and will return 
 ```php
 [
     'type' => Constant that defines the behaviour,
-    'field' => Field of the Entity (Or fields separated by pipe (|) where find the value,
+    'field' => Field of the Entity (Or fields separated by pipe ("|") where find the value,
     'request_type' => Type of the value
     'request_name' => Name of the parameter
 ]
