@@ -428,7 +428,9 @@ Imagine you change your mind and prefer to get the articles that can be publishe
  ```html
  ...
  <div class="col-sm-2">
+         {% raw %}
          {{ include('@PacolmgSymfonyFilter/filters/select.html.twig', {placeholder: 'status', name: 's', options: {'1':'Created', '2':'Published', '3':'Deleted'} }, with_context = false) }}
+         {% endraw %}
  </div>
  ...
  ```
