@@ -71,7 +71,7 @@ class BaseRepository extends ServiceEntityRepository
             $rnd = $filterFields[$filter['field']];
 
             // use the alias of the filter or the alias of class
-            $alias = isset($filter['join_alias']) ? $filter['join_alias'] : $this->alias;
+            $alias = isset($filter['own_alias']) ? $filter['own_alias'] : $this->alias;
 
             // join
             if (isset($filter['join']) && isset($filter['join_alias'])) {
@@ -158,7 +158,7 @@ class BaseRepository extends ServiceEntityRepository
                     break;
                 default:
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' LIKE :' . $this->getParameterName($field, $rnd);
                     }
                     $qb->andWhere($sql);
                     $this->setParameters($qb, $fields, '%' . $filter['value'] . '%', $rnd);
