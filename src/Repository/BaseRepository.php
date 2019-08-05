@@ -27,6 +27,7 @@ class BaseRepository extends ServiceEntityRepository
      * Different type of filters
      */
     const FILTER_EXACT = 'exact';
+    const FILTER_JOIN_MULTIPLE = 'exact_multiple';
     const FILTER_LIKE = 'like';
     const FILTER_IN = 'in';
     const FILTER_GREATER = 'greater';
@@ -64,37 +65,32 @@ class BaseRepository extends ServiceEntityRepository
             return 0;
         }, $filters));
 
-        // Avoid join twice the same entity
-        $alreadyJoined = [];
-
         foreach ($filters as $filter) {
             //some fields has two filters, so the parameter can't be named like the field
             $filterFields[$filter['field']]++;
             $rnd = $filterFields[$filter['field']];
 
             // use the alias of the filter or the alias of class
-            $alias = isset($filter['own_alias']) ? $filter['own_alias'] : $this->alias;
+            $alias = isset($filter['join_alias']) ? $filter['join_alias'] : $this->alias;
 
             // join
-            if (isset($filter['join']) && isset($filter['own_alias']) && !in_array($this->alias . '.' . $filter['join'], $alreadyJoined)) {
-                $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias']);
-                $alreadyJoined[] = $this->alias . '.' . $filter['join'];
+            if (isset($filter['join']) && isset($filter['join_alias'])) {
+                $qb->join($this->alias . '.' . $filter['join'], $filter['join_alias']);
             }
 
             // nested joins
-            if (isset($filter['nested_joins']) && isset($filter['own_alias']) && is_array($filter['nested_joins'])) {
+            if (isset($filter['nested_joins']) && isset($filter['join_alias']) && is_array($filter['nested_joins'])) {
                 $entityAlias = $this->alias;
                 foreach ($filter['nested_joins'] as $entityName => $entityValue) {
-                    if (!in_array($entityAlias . '.' . $entityName, $alreadyJoined)) {
-                        $qb->join($entityAlias . '.' . $entityName, isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias']);
-                        $alreadyJoined[] = $entityAlias . '.' . $entityName;
-                        $entityAlias = isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias'];
-                    }
+                    $qb->join($entityAlias . '.' . $entityName, isset($entityValue['alias']) ? $entityValue['alias'] : $filter['join_alias']);
+                    $entityAlias = isset($entityValue['alias']) ? $entityValue['alias'] : $filter['join_alias'];
                 }
             }
 
+            // Initialize fields
             $fields = explode('|', $filter['field']);
             $sql = '';
+            $sql2 = '';
 
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
@@ -104,9 +100,23 @@ class BaseRepository extends ServiceEntityRepository
                     $qb->andWhere($sql);
                     $this->setParameters($qb, $fields, $filter['value'], $rnd);
                     break;
+                case self::FILTER_JOIN_MULTIPLE:
+                    if (!isset($filter['join'])) {
+                        break;
+                    }
+                    foreach ($fields as $field) {
+                        foreach ($filter['value'] as $k => $value) {
+                            $qb->join($this->alias . '.' . $filter['join'], 'alias_filter_' . ($k + 1));
+                            $sql2 .= ($sql2 == '' ? '' : ' AND ') . $this->getFieldString('alias_filter_' . ($k + 1), $field) . ' = :' . $this->getParameterName($field, $rnd . $k);
+                        }
+                        $sql .= ($sql == '' ? '' : ' OR ') . '(' . $sql2 . ')';
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd, true);
+                    break;
                 case self::FILTER_IN:
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . 'IN (:' . $this->getParameterName($field, $rnd) . ')';
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' IN (:' . $this->getParameterName($field, $rnd) . ')';
                     }
                     $qb->andWhere($sql);
                     $this->setParameters($qb, $fields, $filter['value'], $rnd);
@@ -159,18 +169,25 @@ class BaseRepository extends ServiceEntityRepository
     }
 
     /**
-     * Set parameters to $qb
+     * Set parameters to the query builder
      *
      * @param QueryBuilder $qb
      * @param array $fields
      * @param $value
      * @param $rnd
+     * @param bool $valueAsArray
      * @return QueryBuilder
      */
-    protected function setParameters(QueryBuilder $qb, array $fields, $value, $rnd)
+    protected function setParameters(QueryBuilder $qb, array $fields, $value, $rnd, $valueAsArray = false)
     {
         foreach ($fields as $field) {
-            $qb->setParameter($this->getParameterName($field, $rnd), $value);
+            if ($valueAsArray == true) {
+                foreach ($value as $k => $v) {
+                    $qb->setParameter($this->getParameterName($field, $rnd . $k), $v);
+                }
+            } else {
+                $qb->setParameter($this->getParameterName($field, $rnd), $value);
+            }
         }
 
         return $qb;
