@@ -106,7 +106,7 @@ class BaseRepository extends ServiceEntityRepository
                     break;
                 case self::FILTER_IN:
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . 'IN (:' . $this->getParameterName($field, $rnd) . ')';
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' IN (:' . $this->getParameterName($field, $rnd) . ')';
                     }
                     $qb->andWhere($sql);
                     $this->setParameters($qb, $fields, $filter['value'], $rnd);
