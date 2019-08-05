@@ -27,7 +27,6 @@ class BaseRepository extends ServiceEntityRepository
      * Different type of filters
      */
     const FILTER_EXACT = 'exact';
-    const FILTER_EXACT_MULTIPLE = 'exact_multiple';
     const FILTER_LIKE = 'like';
     const FILTER_IN = 'in';
     const FILTER_GREATER = 'greater';
@@ -85,9 +84,9 @@ class BaseRepository extends ServiceEntityRepository
             // nested joins
             if (isset($filter['nested_joins']) && isset($filter['own_alias']) && is_array($filter['nested_joins'])) {
                 $entityAlias = $this->alias;
-                foreach($filter['nested_joins'] as $entityName => $entityValue) {
-                    if (!in_array($entityAlias.'.'.$entityName, $alreadyJoined)) {
-                        $qb->join($entityAlias .'.'.$entityName, isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias']);
+                foreach ($filter['nested_joins'] as $entityName => $entityValue) {
+                    if (!in_array($entityAlias . '.' . $entityName, $alreadyJoined)) {
+                        $qb->join($entityAlias . '.' . $entityName, isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias']);
                         $alreadyJoined[] = $entityAlias . '.' . $entityName;
                         $entityAlias = isset($entityValue['alias']) ? $entityValue['alias'] : $filter['own_alias'];
                     }
@@ -107,7 +106,7 @@ class BaseRepository extends ServiceEntityRepository
                     break;
                 case self::FILTER_IN:
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . 'IN (:' . $this->getParameterName($field, $rnd).')';
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . 'IN (:' . $this->getParameterName($field, $rnd) . ')';
                     }
                     $qb->andWhere($sql);
                     $this->setParameters($qb, $fields, $filter['value'], $rnd);
@@ -176,6 +175,7 @@ class BaseRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
     /**
      * Method that set the order to the query
      *
