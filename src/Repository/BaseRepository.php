@@ -3,6 +3,7 @@
 namespace Pacolmg\SymfonyFilterBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -228,8 +229,8 @@ class BaseRepository extends ServiceEntityRepository
      * Get the num of Objects in the repository that match the filters
      *
      * @param array $filters
-     *
-     * @return int
+     * @return mixed
+     * @throws NonUniqueResultException
      */
     public function getAllCount(array $filters)
     {
