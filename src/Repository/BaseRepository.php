@@ -93,86 +93,89 @@ class BaseRepository extends ServiceEntityRepository
                     }
                 }
             }
-            
+
+            $fields = explode('|', $filter['field']);
+            $sql = '';
+
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
-                    $fields = explode('|', $filter['field']);
-                    $sql = '';
                     foreach ($fields as $field) {
                         $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
                     }
                     $qb->andWhere($sql);
-                    foreach ($fields as $field) {
-                        $qb->setParameter($this->getParameterName($field, $rnd), $filter['value']);
-                    }
-                    break;
-                case self::FILTER_EXACT_MULTIPLE:
-                    $sql = '';
-                    $countFields = 0;
-                    // Join the rest of the fields
-                    foreach ($filter['value'] as $value) {
-                        $countFields++;
-                        if ($countFields == 1) {
-                            continue;
-                        }
-                        $qb->join($this->alias . '.' . $filter['join'], $filter['own_alias'] . $countFields);
-                    }
-
-                    // Make the conditions
-                    $countFields = 1;
-                    foreach ($filter['value'] as $value) {
-                        $sql .= ($sql == '' ? '' : ' AND ') . $alias . (($countFields == 1) ? '' : $countFields) . '.' . $filter['field'] . ' = :' . $filter['field'] . '_filter_' . $rnd . $countFields;
-                        $countFields++;
-                    }
-                    $qb->andWhere($sql);
-
-                    // Set the parameters
-                    $countFields = 1;
-                    foreach ($filter['value'] as $value) {
-                        $qb->setParameter($filter['field'] . '_filter_' . $rnd . $countFields, $value);
-                        $countFields++;
-                    }
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
                     break;
                 case self::FILTER_IN:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' IN (:' . $this->getParameterName($filter['field'], $rnd) . ')');
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                case self::FILTER_GREATER:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' > :' . $this->getParameterName($filter['field'], $rnd));
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                case self::FILTER_GREATER_EQUAL:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' >= :' . $this->getParameterName($filter['field'], $rnd));
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                case self::FILTER_LESS:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' < :' . $this->getParameterName($filter['field'], $rnd));
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                case self::FILTER_LESS_EQUAL:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' <= :' . $this->getParameterName($filter['field'], $rnd));
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                case self::FILTER_DIFFERENT:
-                    $qb->andWhere($this->getFieldString($alias, $filter['field']) . ' != :' . $this->getParameterName($filter['field'], $rnd));
-                    $qb->setParameter($this->getParameterName($filter['field'], $rnd), $filter['value']);
-                    break;
-                default:
-                    $fields = explode('|', $filter['field']);
-                    $sql = '';
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' LIKE :' . $this->getParameterName($field, $rnd);
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . 'IN (:' . $this->getParameterName($field, $rnd).')';
                     }
                     $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                case self::FILTER_GREATER:
                     foreach ($fields as $field) {
-                        $qb->setParameter($this->getParameterName($field, $rnd), '%' . $filter['value'] . '%');
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' > :' . $this->getParameterName($field, $rnd);
                     }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                case self::FILTER_GREATER_EQUAL:
+                    foreach ($fields as $field) {
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' >= :' . $this->getParameterName($field, $rnd);
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                case self::FILTER_LESS:
+                    foreach ($fields as $field) {
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' < :' . $this->getParameterName($field, $rnd);
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                case self::FILTER_LESS_EQUAL:
+                    foreach ($fields as $field) {
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' <= :' . $this->getParameterName($field, $rnd);
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                case self::FILTER_DIFFERENT:
+                    foreach ($fields as $field) {
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' != :' . $this->getParameterName($field, $rnd);
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    break;
+                default:
+                    foreach ($fields as $field) {
+                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
+                    }
+                    $qb->andWhere($sql);
+                    $this->setParameters($qb, $fields, '%' . $filter['value'] . '%', $rnd);
             }
         }
 
         return $qb;
     }
 
+    /**
+     * Set parameters to $qb
+     *
+     * @param QueryBuilder $qb
+     * @param array $fields
+     * @param $value
+     * @param $rnd
+     * @return QueryBuilder
+     */
+    protected function setParameters(QueryBuilder $qb, array $fields, $value, $rnd)
+    {
+        foreach ($fields as $field) {
+            $qb->setParameter($this->getParameterName($field, $rnd), $value);
+        }
+
+        return $qb;
+    }
     /**
      * Method that set the order to the query
      *
