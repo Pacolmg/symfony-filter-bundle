@@ -70,8 +70,8 @@ It's the only mandatory parameter, and is composed by an array of different filt
 
 
 #### Type of filters
-- `BaseRepository::FILTER_EXACT`: Compares that the field is equal to the value. Admit several fields separated by pipe (<code>&#124;</code>).
-- `BaseRepository::FILTER_LIKE`: Compares that the field is like the value. Admit several fields separated by pipe (<code>&#124;</code>).
+- `BaseRepository::FILTER_EXACT`: Compares that the field is equal to the value.
+- `BaseRepository::FILTER_LIKE`: Compares that the field is like the value.
 - `BaseRepository::FILTER_IN`: Search in array of values, the field.
 - `BaseRepository::FILTER_GREATER`: Compares that the field is greater than the value.
 - `BaseRepository::FILTER_GREATER_EQUAL`: Compares that the field is greater or equal than the value.
