@@ -95,10 +95,16 @@ class BaseRepository extends ServiceEntityRepository
             switch ($filter['type']) {
                 case self::FILTER_EXACT:
                     foreach ($fields as $field) {
-                        $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
+                        if (isset($filter['compare_null'])) {
+                            $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' is NULL';
+                        } else {
+                            $sql .= ($sql == '' ? '' : ' OR ') . $this->getFieldString($alias, $field) . ' = :' . $this->getParameterName($field, $rnd);
+                        }
                     }
                     $qb->andWhere($sql);
-                    $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    if (!isset($filter['compare_null'])) {
+                        $this->setParameters($qb, $fields, $filter['value'], $rnd);
+                    }
                     break;
                 case self::FILTER_JOIN_MULTIPLE:
                     if (!isset($filter['join'])) {
