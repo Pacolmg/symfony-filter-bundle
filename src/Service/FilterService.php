@@ -35,7 +35,7 @@ class FilterService
         }
 
         $filters = array_filter($filters, function ($value) {
-            return !empty($value['value']) || $value['value'] === false;
+            return !empty($value['value']) || (!isset($value['value']) && isset($value['compare_null'])) || $value['value'] === false;
         });
 
         $data = $repository->getAll($filters, $orderBy, $limit, ($page - 1) * $limit);
