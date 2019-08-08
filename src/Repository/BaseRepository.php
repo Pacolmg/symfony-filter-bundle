@@ -255,8 +255,7 @@ class BaseRepository extends ServiceEntityRepository
      * Get the num of Objects in the repository that match the filters
      *
      * @param array $filters
-     * @return mixed
-     * @throws NonUniqueResultException
+     * @return int
      */
     public function getAllCount(array $filters)
     {
@@ -264,7 +263,11 @@ class BaseRepository extends ServiceEntityRepository
 
         $this->setFilters($qb, $filters);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        try {
+            return $qb->getQuery()->getSingleScalarResult();
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**
