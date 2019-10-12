@@ -26,7 +26,7 @@
                 <form id="{% block pacolmg_symfony_filter_bundle_form_id %}pacolmg_symfony_filter_form{% endblock %}" role="form" class="filter-form">
                     <div class="row">
                         {% block pacolmg_symfony_filter_bundle_form_filters_block %}
-                        <div class="col-sm-10">
+                        <div class="col-md-10">
                             <div class="row">
                                 {% block pacolmg_symfony_filter_bundle_form_filters %}
                                     {{ 'pacolmg_symfony_filter_bundle.empty_filters'|trans }}
@@ -35,9 +35,9 @@
                         </div>
                         {% endblock %}
                         {% block pacolmg_symfony_filter_bundle_form_buttons_block %}
-                        <div class="col-2">
+                        <div class="col-md-2">
                             <div class="row d-flex justify-content-end mb-4 pl-3 pr-3">
-                                <div class="btn-group ml-4 mr-3" role="group" aria-label="Filter buttons">
+                                <div class="col-12 btn-group ml-4 mr-3" role="group" aria-label="Filter buttons">
                                     <button type="submit" class="btn btn-primary"><i
                                                 class="fas fa-search"></i> {{ 'pacolmg_symfony_filter_bundle.btn_search'|trans }}
                                     </button>
