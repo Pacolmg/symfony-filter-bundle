@@ -7,7 +7,6 @@ use Pacolmg\SymfonyFilterBundle\Service\FilterService;
 use PHPUnit\Framework\TestCase;
 use Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
