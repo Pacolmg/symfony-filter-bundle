@@ -6,8 +6,11 @@ use Pacolmg\SymfonyFilterBundle\Service\ExternalParametersService;
 use Pacolmg\SymfonyFilterBundle\Service\FilterService;
 use PHPUnit\Framework\TestCase;
 use Pacolmg\SymfonyFilterBundle\PacolmgSymfonyFilterBundle;
+use Pacolmg\SymfonyFilterBundle\Repository\BaseRepository;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class FunctionalTest
@@ -46,5 +49,55 @@ class PacolmgTestingKernel extends Kernel
     }
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+    }
+}
+
+/**
+ * @ORM\Entity(repositoryClass="PostRepository")
+ */
+class Post {
+    /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $title;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title ?? '';
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+}
+/**
+ * @method Post|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Post|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Post[]    findAll()
+ * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class PostRepository extends BaseRepository
+{
+    public function __construct(RegistryInterface $registry)
+    {
+        parent::__construct($registry, Post::class);
     }
 }
