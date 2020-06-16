@@ -2,14 +2,15 @@
 
 namespace Pacolmg\SymfonyFilterBundle\Repository;
 
+use Pacolmg\SymfonyFilterBundle\Model\FilteredTableModel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Class BaseRepository
  *
- * Extends your Symfony 4 Repositories from this class and set the filters
+ * Extends your Symfony 4 or Symfony 5 Repositories from this class and set the filters
  *
  * @package Pacolmg\SymfonyFilterBundle\Repository
  * @author Pacolmg <pacolmg@gmail.com>
@@ -38,14 +39,43 @@ class BaseRepository extends ServiceEntityRepository
     /**
      * BaseRepository constructor.
      *
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param string|null $class
      */
-    public function __construct(RegistryInterface $registry, string $class = null)
+    public function __construct(ManagerRegistry $registry, string $class = null)
     {
         if ($class !== null) {
             parent::__construct($registry, $class);
         }
+    }
+
+    /**
+     * Get a Filtered Table
+     *
+     * @param FilteredTableModel $filteredTable
+     * @return FilteredTableModel
+     */
+    public function getFiltered(FilteredTableModel $filteredTable)
+    {
+        $filteredTable->setData($this->getAll($filteredTable->getFilters(), $filteredTable->getSort(), $filteredTable->getLimit(), $filteredTable->getOffset()));
+        $filteredTable->setTotal($this->getAllCount($filteredTable->getFilters()));
+
+        return $filteredTable;
+    }
+
+    /**
+     * Get distinct values for a $field
+     *
+     * @param string $field
+     * @return mixed
+     */
+    public function getDistinctField(string $field)
+    {
+        $result = $this->createQueryBuilder($this->alias)->select('DISTINCT(' . $this->alias . '.' . $field . ') as ' . $field)->getQuery()->execute();
+
+        return array_map(function (array $distinctField) use ($field) {
+            return $distinctField[$field];
+        }, $result);
     }
 
     /**
@@ -240,7 +270,7 @@ class BaseRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function getAll(array $filters, array $orderBy = null, int $limit = null, int $offset = null)
+    protected function getAll(array $filters, array $orderBy = null, int $limit = null, int $offset = null)
     {
         $qb = $this->createQueryBuilder($this->alias);
 
@@ -256,7 +286,7 @@ class BaseRepository extends ServiceEntityRepository
      * @param array $filters
      * @return int
      */
-    public function getAllCount(array $filters)
+    protected function getAllCount(array $filters)
     {
         $qb = $this->createQueryBuilder($this->alias)->select('count(' . $this->alias . '.id)');
 
@@ -267,21 +297,6 @@ class BaseRepository extends ServiceEntityRepository
         } catch (\Exception $e) {
             return 0;
         }
-    }
-
-    /**
-     * Get distinct values for a $field
-     *
-     * @param string $field
-     * @return mixed
-     */
-    public function getDistinctField(string $field)
-    {
-        $result = $this->createQueryBuilder($this->alias)->select('DISTINCT(' . $this->alias . '.' . $field . ') as ' . $field)->getQuery()->execute();
-
-        return array_map(function (array $distinctField) use ($field) {
-            return $distinctField[$field];
-        }, $result);
     }
 
     /**

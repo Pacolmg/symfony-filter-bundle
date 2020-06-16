@@ -2,8 +2,11 @@
 
 namespace Pacolmg\SymfonyFilterBundle\Twig;
 
+use Pacolmg\SymfonyFilterBundle\Model\FilteredTableModel;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Class AppExtension
@@ -25,6 +28,16 @@ class AppExtension extends AbstractExtension
     }
 
     /**
+     * @return array|TwigFunction[]
+     */
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('paginationData', [$this, 'paginationData']),
+        ];
+    }
+
+    /**
      * Encode the filters in order to concatenate them after a url
      *
      * @param $queryParams
@@ -37,10 +50,26 @@ class AppExtension extends AbstractExtension
         $filterPath = '';
         foreach ($filters as $filter) {
             if (isset($queryParams[$filter])) {
-                $filterPath = sprintf('%s%s', $filterPath, sprintf('&%s=%s', $filter, is_array($queryParams[$filter]) ? join(',', $queryParams[$filter]) : $queryParams[$filter]));
+                $filterPath = sprintf('%s%s', $filterPath, sprintf('&%s=%s', $filter,
+                    is_array($queryParams[$filter]) ? join(',', $queryParams[$filter]) : $queryParams[$filter]));
             }
         }
 
         return $filterPath;
+    }
+
+    /**
+     * @param Request $request
+     * @param FilteredTableModel $filteredTable
+     * @return array
+     */
+    public function paginationData(Request $request, FilteredTableModel $filteredTable)
+    {
+        return [
+            'currentPage' => $filteredTable->getPage(),
+            'url' => $request->get('_route'),
+            'params' => $request->query->all(),
+            'nbPages' => $filteredTable->getTotalPages()
+        ];
     }
 }
