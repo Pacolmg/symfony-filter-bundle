@@ -1,6 +1,6 @@
 <?php
 
-namespace Pacolmg\SymfonyFilterBundle;
+namespace Pacolmg\SymfonyFilterBundle\Adapter;
 
 use Pacolmg\SymfonyFilterBundle\Model\FilteredTableModel;
 use Symfony\Component\HttpFoundation\Request;
