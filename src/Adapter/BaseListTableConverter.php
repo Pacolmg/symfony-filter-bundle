@@ -32,10 +32,7 @@ class BaseListTableConverter
 
         // limit
         $limit = (int)$request->get('limit', 0);
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
+        
         // sort
         $sort = $request->get('sort');
         $dir = $request->get('dir');
