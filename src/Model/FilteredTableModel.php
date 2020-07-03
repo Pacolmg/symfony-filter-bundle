@@ -47,6 +47,11 @@ class FilteredTableModel
     private $total;
 
     /**
+     * @var array
+     */
+    private $selectorsData;
+
+    /**
      * FilteredTableModel constructor.
      * @param int|null $page
      * @param int|null $limit
@@ -69,6 +74,7 @@ class FilteredTableModel
         $this->filters = $filters;
         $this->data = $data;
         $this->total = $total ?? count($data);
+        $this->selectorsData = [];
     }
 
     /**
@@ -197,6 +203,24 @@ class FilteredTableModel
         $this->total = $total;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getSelectorsData(): array
+    {
+        return $this->selectorData;
+    }
+
+    /**
+     * @param array $selectorData
+     */
+    public function setSelectorsData(array $selectorData): self
+    {
+        $this->selectorData = $selectorData;
+        return $this;
+    }
+
     /**
      * @return int
      */
